@@ -1,6 +1,10 @@
 # Real Estate Recommendation System
 
-A comprehensive machine learning and data analytics project for Gurgaon real estate properties, featuring end-to-end data cleaning, preprocessing, feature engineering, outlier detection, missing value imputation, and exploratory data analysis (univariate and multivariate).
+[![Deployed on Vercel](https://img.shields.io/badge/Vercel-Live%20Demo-blue?style=flat&logo=vercel)](https://real-estate-recommendation-system.vercel.app)
+
+A comprehensive machine learning and data analytics project for Gurgaon real estate properties, featuring end-to-end data cleaning, preprocessing, feature engineering, outlier detection, missing value imputation, exploratory data analysis, and an interactive web dashboard.
+
+🌐 **Live Web Application**: [https://real-estate-recommendation-system.vercel.app](https://real-estate-recommendation-system.vercel.app)
 
 ## 📁 Project Structure
 
