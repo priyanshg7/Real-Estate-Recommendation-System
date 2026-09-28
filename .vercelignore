@@ -1,0 +1,12 @@
+.git
+.github
+*.ipynb
+raw_Data/
+data_first_cleaning/
+gurgaon_properties_cleaned_v2.csv
+gurgaon_properties_final.csv
+gurgaon_properties_prefinal.csv
+.ipynb_checkpoints
+__pycache__
+*.pyc
+*.lnk
