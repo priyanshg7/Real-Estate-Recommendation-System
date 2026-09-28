@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gurgaon Real Estate Analytics & Recommendation Engine</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js & Plotly CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <!-- Ambient background glow -->
+  <div class="bg-glow-container">
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+  </div>
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand-section">
+        <div class="brand-icon">
+          <i class="fas fa-building-circle-check"></i>
+        </div>
+        <div>
+          <div class="brand-title">EstateIQ</div>
+          <div class="brand-subtitle">Gurgaon Analytics</div>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item active" data-tab="tab-overview">
+          <i class="fas fa-chart-pie"></i>
+          <span>Executive Overview</span>
+        </li>
+        <li class="nav-item" data-tab="tab-eda">
+          <i class="fas fa-chart-line"></i>
+          <span>EDA & Analytics Hub</span>
+        </li>
+        <li class="nav-item" data-tab="tab-sectors">
+          <i class="fas fa-map-location-dot"></i>
+          <span>Sector Intelligence</span>
+        </li>
+        <li class="nav-item" data-tab="tab-explorer">
+          <i class="fas fa-database"></i>
+          <span>Cleaned Data Explorer</span>
+        </li>
+        <li class="nav-item" data-tab="tab-ai">
+          <i class="fas fa-wand-magic-sparkles"></i>
+          <span>AI Valuation & Recs</span>
+        </li>
+        <li class="nav-item" data-tab="tab-pipeline">
+          <i class="fas fa-diagram-project"></i>
+          <span>Data Pipeline Insights</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <span style="font-size: 12px; color: var(--text-muted);">v1.0.0 • ML Ready</span>
+        <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">
+          <i class="fas fa-sun"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="top-header">
+        <div class="header-title-group">
+          <h1>Gurgaon Real Estate Analytics & Intelligence</h1>
+          <p>Comprehensive data preprocessing, EDA distributions, market valuations, and recommendation engine.</p>
+        </div>
+        <div class="header-actions">
+          <span class="badge-tag"><i class="fas fa-shield-halved"></i> Outliers Treated</span>
+          <span class="badge-tag"><i class="fas fa-check-double"></i> MICE Imputed</span>
+        </div>
+      </header>
+
+      <main class="content-body">
+        
+        <!-- 1. EXECUTIVE OVERVIEW TAB -->
+        <section id="tab-overview" class="tab-pane active">
+          <!-- KPI Grid -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon icon-purple"><i class="fas fa-city"></i></div>
+              <div class="kpi-info">
+                <h3>Total Cleaned Properties</h3>
+                <div class="kpi-value" id="kpiTotalProps">--</div>
+                <div class="kpi-sub">Flats & Houses across Gurgaon</div>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon icon-emerald"><i class="fas fa-indian-rupee-sign"></i></div>
+              <div class="kpi-info">
+                <h3>Median Price</h3>
+                <div class="kpi-value" id="kpiMedianPrice">--</div>
+                <div class="kpi-sub">Standardized in Crores</div>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon icon-cyan"><i class="fas fa-calculator"></i></div>
+              <div class="kpi-info">
+                <h3>Avg Price / Sq.Ft</h3>
+                <div class="kpi-value" id="kpiAvgSqft">--</div>
+                <div class="kpi-sub">Rate per square foot</div>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon icon-amber"><i class="fas fa-vector-square"></i></div>
+              <div class="kpi-info">
+                <h3>Avg Built-up Area</h3>
+                <div class="kpi-value" id="kpiAvgArea">--</div>
+                <div class="kpi-sub">Imputed built-up area</div>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon icon-rose"><i class="fas fa-crown"></i></div>
+              <div class="kpi-info">
+                <h3>Avg Luxury Index</h3>
+                <div class="kpi-value" id="kpiAvgLuxury">--</div>
+                <div class="kpi-sub">Feature engineering score</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overview Charts Grid -->
+          <div class="grid-2" style="margin-top: 24px;">
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-pie-chart"></i> Property Type Distribution</div>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="propTypeChart"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-chart-simple"></i> Top High-Volume Sectors</div>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="topSectorsChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top: 24px;">
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-bed"></i> Bedroom (BHK) Distribution</div>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="bhkDistChart"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-couch"></i> Furnishing Status Breakdown</div>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="furnishDistChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. EDA & ANALYTICS HUB TAB -->
+        <section id="tab-eda" class="tab-pane">
+          <!-- Univariate Section -->
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title"><i class="fas fa-chart-column"></i> Univariate Distribution Studio</div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <label style="font-size: 13px; color: var(--text-secondary);">Select Feature:</label>
+                <select class="form-select" id="univariateFeatureSelect">
+                  <optgroup label="Numerical Features">
+                    <option value="price" selected>Price (₹ Crores)</option>
+                    <option value="price_per_sqft">Price Per Sq.Ft (₹)</option>
+                    <option value="built_up_area">Built-Up Area (Sq.Ft)</option>
+                    <option value="bedRoom">Bedrooms (BHK)</option>
+                    <option value="bathroom">Bathrooms</option>
+                    <option value="luxury_score">Luxury Score</option>
+                    <option value="floorNum">Floor Number</option>
+                  </optgroup>
+                  <optgroup label="Categorical Features">
+                    <option value="property_type">Property Type</option>
+                    <option value="furnishing_desc">Furnishing Type</option>
+                    <option value="facing">Facing Direction</option>
+                    <option value="agePossession">Age of Possession</option>
+                    <option value="balcony">Balconies</option>
+                    <option value="sector">Top 20 Sectors</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <div class="chart-wrapper" style="min-height: 360px;">
+              <canvas id="univariateMainChart"></canvas>
+            </div>
+
+            <!-- Statistical Summary Grid -->
+            <div id="univariateStatsGrid" class="stats-table-wrapper"></div>
+          </div>
+
+          <!-- Multivariate Section -->
+          <div class="grid-2" style="margin-top: 24px;">
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-braille"></i> Scatter Plot: Built-Up Area vs Price</div>
+              </div>
+              <div id="plotlyScatterAreaPrice" style="width: 100%; height: 380px;"></div>
+            </div>
+
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-fire"></i> Feature Correlation Matrix</div>
+              </div>
+              <div id="plotlyHeatmap" style="width: 100%; height: 380px;"></div>
+            </div>
+          </div>
+
+          <div class="glass-card" style="margin-top: 24px;">
+            <div class="card-header-flex">
+              <div class="card-title"><i class="fas fa-layer-group"></i> Price Variation by BHK Configuration</div>
+            </div>
+            <div class="chart-wrapper" style="min-height: 320px;">
+              <canvas id="bhkPriceBarChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. SECTOR INTELLIGENCE TAB -->
+        <section id="tab-sectors" class="tab-pane">
+          <!-- Sector Selector Deep-Dive -->
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title"><i class="fas fa-location-crosshairs"></i> Sector Deep-Dive Explorer</div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <label style="font-size: 13px; color: var(--text-secondary);">Choose Sector:</label>
+                <select class="form-select" id="sectorDeepDiveSelect" style="min-width: 200px;"></select>
+              </div>
+            </div>
+
+            <div class="kpi-grid" style="margin-bottom: 20px;">
+              <div class="stat-pill"><div class="stat-pill-label">Total Listings</div><div class="stat-pill-val" id="secTotalProps">--</div></div>
+              <div class="stat-pill"><div class="stat-pill-label">Median Price</div><div class="stat-pill-val" id="secMedianPrice" style="color: #10b981;">--</div></div>
+              <div class="stat-pill"><div class="stat-pill-label">Avg Rate / Sq.Ft</div><div class="stat-pill-val" id="secAvgSqft">--</div></div>
+              <div class="stat-pill"><div class="stat-pill-label">Avg Luxury Score</div><div class="stat-pill-val" id="secAvgLuxury">--</div></div>
+            </div>
+
+            <div>
+              <h4 style="font-size: 13px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 8px;">Top Prominent Societies in Sector:</h4>
+              <div id="secTopSocieties" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            </div>
+          </div>
+
+          <!-- Top Expensive & Affordable Sectors Grid -->
+          <div class="grid-2" style="margin-top: 24px;">
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-arrow-trend-up" style="color: #ef4444;"></i> Top 10 Most Premium Sectors</div>
+              </div>
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Sector</th>
+                      <th>Avg Price</th>
+                      <th>Avg Rate/SqFt</th>
+                      <th>Listings</th>
+                    </tr>
+                  </thead>
+                  <tbody id="topExpensiveSectorsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-arrow-trend-down" style="color: #10b981;"></i> Top 10 Most Affordable Sectors</div>
+              </div>
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Sector</th>
+                      <th>Avg Price</th>
+                      <th>Avg Rate/SqFt</th>
+                      <th>Listings</th>
+                    </tr>
+                  </thead>
+                  <tbody id="topAffordableSectorsBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. CLEANED DATA EXPLORER TAB -->
+        <section id="tab-explorer" class="tab-pane">
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title"><i class="fas fa-filter"></i> Multi-Faceted Dataset Filter</div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline-primary" id="btnResetFilters"><i class="fas fa-rotate-left"></i> Reset</button>
+                <button class="btn btn-primary" id="btnExportCsv"><i class="fas fa-download"></i> Export Filtered CSV</button>
+              </div>
+            </div>
+
+            <div class="filter-panel">
+              <div class="filter-group">
+                <label>Property Type</label>
+                <select class="form-select" id="tableFilterType">
+                  <option value="all">All Types</option>
+                  <option value="flat">Flat / Apartment</option>
+                  <option value="house">Independent House</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label>Sector</label>
+                <select class="form-select" id="tableFilterSector"></select>
+              </div>
+
+              <div class="filter-group">
+                <label>Furnishing Status</label>
+                <select class="form-select" id="tableFilterFurnish">
+                  <option value="all">All Statuses</option>
+                  <option value="Unfurnished">Unfurnished</option>
+                  <option value="Semi-Furnished">Semi-Furnished</option>
+                  <option value="Furnished">Furnished</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label>BHK (Bedrooms)</label>
+                <select class="form-select" id="tableFilterBhk">
+                  <option value="all">All Configurations</option>
+                  <option value="1">1 BHK</option>
+                  <option value="2">2 BHK</option>
+                  <option value="3">3 BHK</option>
+                  <option value="4">4 BHK</option>
+                  <option value="5">5+ BHK</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label>Price Range (₹ Cr)</label>
+                <div style="display: flex; gap: 6px;">
+                  <input type="number" class="form-input" id="tableFilterMinPrice" placeholder="Min Cr" step="0.1" style="width: 50%;">
+                  <input type="number" class="form-input" id="tableFilterMaxPrice" placeholder="Max Cr" step="0.1" style="width: 50%;">
+                </div>
+              </div>
+
+              <div class="filter-group">
+                <label>Min Luxury Score</label>
+                <input type="number" class="form-input" id="tableFilterMinLuxury" placeholder="e.g. 40" min="0" max="100">
+              </div>
+
+              <div class="filter-group" style="grid-column: 1 / -1;">
+                <label>Search Society / Keywords</label>
+                <input type="text" class="form-input" id="tableSearchInput" placeholder="Search by society name, sector, or keyword (e.g. DLF, Godrej, Central Park)...">
+              </div>
+
+              <div class="filter-group" style="grid-column: 1 / -1;">
+                <label>Additional Rooms Requirement</label>
+                <div class="checkbox-row">
+                  <label class="custom-check"><input type="checkbox" id="tableFilterStudy"> Study Room</label>
+                  <label class="custom-check"><input type="checkbox" id="tableFilterServant"> Servant Room</label>
+                  <label class="custom-check"><input type="checkbox" id="tableFilterStore"> Store Room</label>
+                  <label class="custom-check"><input type="checkbox" id="tableFilterPooja"> Pooja Room</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Table Header Stats -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span id="tableTotalCount" style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">Loading properties...</span>
+            </div>
+
+            <!-- Main Table -->
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Society</th>
+                    <th>Sector</th>
+                    <th>Price</th>
+                    <th>Price / SqFt</th>
+                    <th>Area</th>
+                    <th>Configuration</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="propertiesTableBody"></tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="pagination-bar" id="tablePagination"></div>
+          </div>
+        </section>
+
+        <!-- 5. AI VALUATION & RECOMMENDER TAB -->
+        <section id="tab-ai" class="tab-pane">
+          <div class="grid-2">
+            <!-- Price Estimator -->
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-calculator"></i> AI Property Price Estimator</div>
+              </div>
+              <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 18px;">
+                Predict realistic market price valuations based on Random Forest Machine Learning trained on Gurgaon property attributes.
+              </p>
+
+              <form id="priceEstimatorForm" class="filter-panel" style="grid-template-columns: 1fr 1fr; background: transparent; padding: 0;">
+                <div class="filter-group">
+                  <label>Property Type</label>
+                  <select class="form-select" id="predPropType">
+                    <option value="flat">Flat / Apartment</option>
+                    <option value="house">Independent House</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label>Sector</label>
+                  <select class="form-select" id="predSector"></select>
+                </div>
+
+                <div class="filter-group">
+                  <label>Built-Up Area (Sq.Ft)</label>
+                  <input type="number" class="form-input" id="predArea" value="1850" min="200" max="15000">
+                </div>
+
+                <div class="filter-group">
+                  <label>Bedrooms (BHK)</label>
+                  <select class="form-select" id="predBhk">
+                    <option value="1">1 BHK</option>
+                    <option value="2">2 BHK</option>
+                    <option value="3" selected>3 BHK</option>
+                    <option value="4">4 BHK</option>
+                    <option value="5">5 BHK</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label>Bathrooms</label>
+                  <input type="number" class="form-input" id="predBaths" value="3" min="1" max="10">
+                </div>
+
+                <div class="filter-group">
+                  <label>Floor Number</label>
+                  <input type="number" class="form-input" id="predFloor" value="6" min="0" max="50">
+                </div>
+
+                <div class="filter-group">
+                  <label>Furnishing Status</label>
+                  <select class="form-select" id="predFurnishing">
+                    <option value="Unfurnished">Unfurnished</option>
+                    <option value="Semi-Furnished" selected>Semi-Furnished</option>
+                    <option value="Furnished">Furnished</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label>Luxury Score (0-100)</label>
+                  <input type="number" class="form-input" id="predLuxury" value="45" min="0" max="100">
+                </div>
+
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                  <label>Extra Rooms</label>
+                  <div class="checkbox-row">
+                    <label class="custom-check"><input type="checkbox" id="predStudy"> Study Room</label>
+                    <label class="custom-check"><input type="checkbox" id="predServant" checked> Servant Room</label>
+                    <label class="custom-check"><input type="checkbox" id="predStore"> Store Room</label>
+                    <label class="custom-check"><input type="checkbox" id="predPooja"> Pooja Room</label>
+                  </div>
+                </div>
+
+                <div style="grid-column: 1 / -1; margin-top: 10px;">
+                  <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+                    <i class="fas fa-wand-magic-sparkles"></i> Estimate Fair Market Price
+                  </button>
+                </div>
+              </form>
+
+              <!-- Estimation Result Box -->
+              <div id="valuationResultArea" class="valuation-hero" style="display: none;">
+                <div style="font-size: 13px; text-transform: uppercase; color: var(--text-secondary); font-weight: 600;">Estimated Valuation</div>
+                <div class="valuation-price" id="valEstimatedPrice">₹ 0.00 Cr</div>
+                <div style="font-size: 14px; font-weight: 600; color: #a5b4fc;" id="valPriceRange">Range</div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 6px;" id="valPriceSqft">₹ 0 / Sq.Ft</div>
+                <div style="font-size: 12px; color: #10b981; margin-top: 8px; font-weight: 500;" id="valSectorBenchmark"></div>
+              </div>
+            </div>
+
+            <!-- Smart Recommender -->
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-thumbs-up"></i> Smart Property Recommender</div>
+              </div>
+              <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 18px;">
+                Find the highest similarity matching properties based on your exact budget, BHK, luxury score, and layout preferences.
+              </p>
+
+              <form id="propertyRecommenderForm" class="filter-panel" style="grid-template-columns: 1fr 1fr; background: transparent; padding: 0;">
+                <div class="filter-group">
+                  <label>Budget Min (₹ Cr)</label>
+                  <input type="number" class="form-input" id="recBudgetMin" value="1.2" step="0.1" min="0.1">
+                </div>
+
+                <div class="filter-group">
+                  <label>Budget Max (₹ Cr)</label>
+                  <input type="number" class="form-input" id="recBudgetMax" value="3.2" step="0.1" min="0.1">
+                </div>
+
+                <div class="filter-group">
+                  <label>Preferred Sector</label>
+                  <select class="form-select" id="recSector"></select>
+                </div>
+
+                <div class="filter-group">
+                  <label>Property Type</label>
+                  <select class="form-select" id="recPropType">
+                    <option value="all">Any Type</option>
+                    <option value="flat">Flat / Apartment</option>
+                    <option value="house">Independent House</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label>Preferred BHK</label>
+                  <select class="form-select" id="recBhk">
+                    <option value="0">Any BHK</option>
+                    <option value="2">2 BHK</option>
+                    <option value="3" selected>3 BHK</option>
+                    <option value="4">4 BHK</option>
+                    <option value="5">5 BHK</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label>Min Luxury Score</label>
+                  <input type="number" class="form-input" id="recLuxury" value="30" min="0" max="100">
+                </div>
+
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                  <label>Mandatory Extra Rooms</label>
+                  <div class="checkbox-row">
+                    <label class="custom-check"><input type="checkbox" id="recServant"> Servant Room</label>
+                    <label class="custom-check"><input type="checkbox" id="recStudy"> Study Room</label>
+                  </div>
+                </div>
+
+                <div style="grid-column: 1 / -1; margin-top: 10px;">
+                  <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+                    <i class="fas fa-crosshairs"></i> Get Best Matched Properties
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Recommendations Grid -->
+          <div style="margin-top: 28px;">
+            <div class="card-header-flex">
+              <div class="card-title"><i class="fas fa-star" style="color: #f59e0b;"></i> Top Recommendation Matches</div>
+            </div>
+            <div id="recommendationsGrid" class="grid-3" style="margin-top: 16px;">
+              <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+                Submit your preferences above to see smart ranked property recommendations with match scoring!
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. DATA PIPELINE INSIGHTS TAB -->
+        <section id="tab-pipeline" class="tab-pane">
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title"><i class="fas fa-timeline"></i> End-to-End Data Science & Machine Learning Pipeline</div>
+            </div>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 28px;">
+              A step-by-step summary of the data extraction, preprocessing, outlier detection, MICE imputation, and exploratory data analysis across all 8 notebooks.
+            </p>
+
+            <div class="pipeline-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4>Notebook 1: Flat Listings Cleaning & Scraping Normalization</h4>
+                <p>Extracted raw flat listings from <code>raw_Data/flats.csv</code>. Cleaned messy price strings (Crores vs Lakhs), extracted sector numbers via regex, processed carpet/super built-up areas, and formatted bathroom & balcony counts into structured integer types.</p>
+              </div>
+            </div>
+
+            <div class="pipeline-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4>Notebook 2: Independent House Listings Cleaning</h4>
+                <p>Cleaned raw house listings from <code>raw_Data/house.csv</code>. Standardized rate per sq.ft, floor numbers allowed, land areas (Sq. Yards / Sq. Meters to Sq.Ft conversion), and consolidated address descriptions.</p>
+              </div>
+            </div>
+
+            <div class="pipeline-step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h4>Notebook 3: Merging Flat and House Datasets</h4>
+                <p>Merged the cleaned flats and houses datasets into a unified schema, ensuring column consistency and preserving property identifiers across 3,900+ listings.</p>
+              </div>
+            </div>
+
+            <div class="pipeline-step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h4>Notebook 4: Combined Data Preprocessing & Sector Mapping</h4>
+                <p>Standardized Gurgaon sectors (e.g. 'Sector 102', 'Sector 85', 'Dwarka Expressway', 'Golf Course Road'), resolved multi-sector inconsistencies, and computed estimated area metrics.</p>
+              </div>
+            </div>
+
+            <div class="pipeline-step">
+              <div class="step-number">5</div>
+              <div class="step-content">
+                <h4>Notebook 5: Feature Engineering & Luxury Scoring</h4>
+                <p>Extracted 50+ luxury amenity tags (swimming pool, clubhouse, tennis court, security, etc.) into a weighted <strong>Luxury Score</strong> (0 to 100+). One-hot encoded additional rooms (study room, servant room, store room, pooja room) and categorical furnishing status (0=Unfurnished, 1=Semi-Furnished, 2=Furnished).</p>
+              </div>
+            </div>
+
+            <div class="pipeline-step">
+              <div class="step-number">6</div>
+              <div class="step-content">
+                <h4>Notebook 6: Outlier Treatment & Missing Value Imputation (OT & MVI)</h4>
+                <p>Detected and removed price anomalies (e.g. ultra-low prices < 5 Lakhs, abnormally high price/sqft outliers), filtered impossible bedroom-to-bathroom ratios, and imputed missing built-up areas using linear regression / median category models to generate <code>OT_MVI.csv</code>.</p>
+              </div>
+            </div>
+
+            <div class="pipeline-step">
+              <div class="step-number">7</div>
+              <div class="step-content">
+                <h4>Notebook 7: Univariate Statistical Analysis</h4>
+                <p>Analyzed distribution shape, skewness, kurtosis, and histograms for price, rate per sq.ft, area, and BHK configurations. Identified heavy right-skewed price distribution log-transformations.</p>
+              </div>
+            </div>
+
+            <div class="pipeline-step">
+              <div class="step-number">8</div>
+              <div class="step-content">
+                <h4>Notebook 8: Multivariate & Correlation Exploratory Analysis</h4>
+                <p>Evaluated multi-variable interactions: price vs built-up area across property types, luxury index correlation with property rates, and sector-wise premium pricing tiers.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Property Detail Modal -->
+  <div id="propertyModal" class="modal-overlay">
+    <div class="modal-box">
+      <button class="modal-close" id="modalCloseBtn"><i class="fas fa-times"></i></button>
+      
+      <div style="margin-bottom: 20px;">
+        <h2 id="modalSocietyTitle" style="font-size: 22px; font-weight: 800;">Society Name</h2>
+        <p id="modalSector" style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">Sector</p>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: baseline; background: var(--bg-tertiary); padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px;">
+        <div>
+          <div style="font-size: 28px; font-weight: 800; color: #10b981;" id="modalPrice">₹ 0.00 Cr</div>
+          <div style="font-size: 13px; color: var(--text-muted);" id="modalSqftRate">₹ 0 / Sq.Ft</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 16px; font-weight: 700;" id="modalArea">0 Sq.Ft</div>
+          <div style="font-size: 13px; color: #818cf8; font-weight: 600;" id="modalLuxuryScore">Score</div>
+        </div>
+      </div>
+
+      <div class="stats-table-wrapper" style="margin-bottom: 20px;">
+        <div class="stat-pill"><div class="stat-pill-label">Bedrooms</div><div class="stat-pill-val" id="modalBhk">--</div></div>
+        <div class="stat-pill"><div class="stat-pill-label">Bathrooms</div><div class="stat-pill-val" id="modalBaths">--</div></div>
+        <div class="stat-pill"><div class="stat-pill-label">Floor</div><div class="stat-pill-val" id="modalFloor">--</div></div>
+        <div class="stat-pill"><div class="stat-pill-label">Facing</div><div class="stat-pill-val" id="modalFacing">--</div></div>
+        <div class="stat-pill"><div class="stat-pill-label">Furnishing</div><div class="stat-pill-val" id="modalFurnishing">--</div></div>
+      </div>
+
+      <div>
+        <h4 style="font-size: 13px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 8px;">Included Layout Features:</h4>
+        <div id="modalExtraRooms" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/charts.js"></script>
+  <script src="/static/js/recommender.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
